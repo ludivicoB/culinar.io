@@ -5,6 +5,7 @@ import IngredientsForm from "../components/IngredientsForm";
 import RecipeForm from "../components/RecipeForm";
 import RecipeStepsForm from "../components/RecipeStepsForm";
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 const steps = [
   { label: "Create Recipe", icon: <Fastfood /> },
   { label: "Add Your Ingredients", icon: <ShoppingCart /> },
@@ -12,6 +13,7 @@ const steps = [
 ];
 
 const CreateRecipePage = () => {
+  const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const [recipeData, setRecipeData] = useState(null);
   const [ingredients, setIngredients] = useState([]);
@@ -59,10 +61,37 @@ const CreateRecipePage = () => {
 
   const handleStepsSubmit = async (stepsData) => {
     setLoading(true);
+    console.log("Uploading steps data:", stepsData);
+    console.log("Uploading Ingredients:", ingredients);
     try {
-      console.log("Uploading steps data:", stepsData);
-      console.log("Uploading Ingredients:", ingredients);
-      setSnackbar({ open: true, message: "Recipe created successfully!", severity: "success" });
+      const res = await axios.post(`${apiUrl}/recipe/ingredients`,{
+        recipeid: recipeId,
+        ingredients: ingredients
+      },{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        }
+      })
+      if(res.data){
+        const res2 = await axios.post(`${apiUrl}/recipe/insert-steps`,{
+          recipe_id: recipeId,
+          steps: stepsData
+        },{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
+          }
+        })
+        setSnackbar({ open: true, message: res.data.message, severity: "success" });
+        console.log(res.data)
+        if(res2.data){
+          setSnackbar({ open: true, message: res2.data.message, severity: "success" });
+          navigate('/home')
+        }
+      }
+     
+      // setSnackbar({ open: true, message: "Recipe created successfully!", severity: "success" });
     } catch (error) {
       console.log(error);
     } finally {

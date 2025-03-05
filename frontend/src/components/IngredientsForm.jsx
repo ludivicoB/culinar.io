@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { TextField, Button, Paper, Typography, Box, Card, CardContent, IconButton, Select, MenuItem, InputLabel,FormControl} from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { motion } from "motion/react";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
     const lastIngredientRef = useRef(null);
   
@@ -33,8 +34,27 @@ const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
   
     return (
     <motion.div initial={{y: -50, opacity: 0.5}} animate={{ y: 0, opacity: 1, transition:{duration: 0.6}}}>
-      <Box sx={{ maxWidth: 500, textAlign: "center" }}>
-        <Paper sx={{ textAlign: "center", maxWidth: 500, borderRadius: "2rem", boxShadow: 10 }}>
+      <Box 
+        sx={{ 
+          textAlign: "center",
+          width: '40rem',
+          '@media (max-width: 710px)':{
+            width: '35rem'
+          },
+          '@media (max-width: 634px)':{
+            width:'30rem'
+          },
+          '@media (max-width: 512px)':{
+            width: '26rem'
+          },
+          '@media (max-width: 437px)':{
+            width: '22rem'
+          },
+          '@media (max-width: 373px)':{
+            width: '19rem'
+          },
+        }}>
+        <Paper sx={{ textAlign: "center", borderRadius: "2rem", boxShadow: 10 }}>
           <Typography
             variant="h5"
             gutterBottom
@@ -44,9 +64,28 @@ const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
               backgroundColor: "#E1A840",
               padding: "1rem",
               color: "#243A4A",
+              position: "relative",
+              '@media (max-width: 373px)':{
+                fontSize: '1.3rem'
+              },
             }}
           >
             Add Your Ingredients
+            <IconButton 
+              onClick={onNext} 
+              disabled={isNextDisabled}
+              sx={{
+                position: "absolute",
+                right: "1rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                '@media (max-width: 373px)':{
+                  right: "0.1rem"
+                },
+              }}
+            >
+              <ArrowForwardIosIcon/>
+            </IconButton>
           </Typography>
           <Box sx={{ px: { xs: "1rem", sm: "2rem", md: "4rem" }, py: "2rem" }}>
             {ingredients.map((ingredient, index) => (
@@ -81,7 +120,7 @@ const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
                     placeholder="Quantity of Ingredient"
                     required
                     sx={{ marginBottom: 1 }}
-                    inputProps={{ min: 1 }}
+                    inputProps={{ min: 0.1 }}
                   />
                   <FormControl fullWidth variant="outlined" required>
                     <InputLabel>Unit</InputLabel>
@@ -118,9 +157,6 @@ const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
                 style={{ width: 20, height: 20, marginRight: 10 }}
               />
               Add Ingredient
-            </Button>
-            <Button variant="contained" color="success" onClick={onNext} disabled={isNextDisabled}>
-              Next
             </Button>
           </Box>
         </Paper>
