@@ -22,4 +22,18 @@ class Recipe extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients', 'recipe_id', 'ingredient_id')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+
+
+    public function steps()
+    {
+        return $this->hasMany(Step::class, 'recipe_id');
+    }
+
 }
