@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recipe;
+use App\Models\User;
 use App\Models\Ingredient;
 use App\Models\Step;
 use Illuminate\Http\Request;
@@ -58,7 +59,7 @@ class RecipeController extends Controller
 
                 DB::table('recipe_ingredients')->insert([
                     'recipe_id' => $recipeId,
-                    'ingredient_id' => $ingredientModel->id,
+                    'ingredient_id' => $ingredientModel->ingredient_id,
                     'quantity' => $ingredient['quantity'],
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -109,12 +110,25 @@ class RecipeController extends Controller
         $recipes = Recipe::where('userid', $user->userid)
             ->with(['ingredients', 'steps']) // Assuming relationships exist
             ->get();
-
+        foreach ($recipes as $recipe) {
+            $recipe->recipe_image = asset("storage/recipeimgs/{$recipe->recipe_image}");
+        }
         return response()->json([
             'recipes' => $recipes,
             'status' => 'success'
         ]);
     }
-
-
+    public function getRecipeByID($recipeid)
+    {
+        $recipe = Recipe::with(['ingredients', 'steps'])->find($recipeid);
+        $user = User::find($recipe->userid);
+        $user = (object) $user->only(['avatar', 'fname', 'lname', 'banner_color']);
+        $user->avatar = asset("storage/avatars/{$user->avatar}");
+        $recipe->recipe_image = asset("storage/recipeimgs/{$recipe->recipe_image}");
+        return response()->json([
+            'recipe' => $recipe,
+            'user' => $user,
+            'status' => 'success'
+        ]);
+    }
 }

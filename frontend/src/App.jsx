@@ -11,6 +11,9 @@ import AuthNavbar from "./components/AuthNavbar.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx"
 import Footer from "./components/Footer.jsx";
 import CreateRecipePage from "./pages/CreateRecipePage.jsx";
+import MyRecipesPage from "./pages/MyRecipesPage.jsx";
+import ScrollToTopButton from "./components/ScrollToTopButton.jsx";
+import ViewRecipePage from "./pages/ViewRecipePage.jsx";
 function App() {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   return (
@@ -26,10 +29,13 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage/>}/>
             <Route path="/create-recipe" element={<CreateRecipePage />} />
+            <Route path="/my-recipes" element={<MyRecipesPage />} />
+            <Route path="/recipe/:id" element={<ViewRecipePage />} />
           </Route>
         </Routes>
         {isAuthenticated && <Footer />}
       </Router>
+      <ScrollToTopButton />
     </ThemeProvider>
   );
 }

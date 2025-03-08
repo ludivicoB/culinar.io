@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Backdrop, CircularProgress, IconButton } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -7,6 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Stack } from "@mui/system";
 
 const AuthNavbar = () => {
+  const location = useLocation()
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,12 +49,12 @@ const AuthNavbar = () => {
         },
       });
 
-      if (res.data.status === "success") {
+      if (res.data) {
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         localStorage.removeItem("tokenType");
-        location.href = "/login";
+        window.location.href = "/login";
       }
     } catch (error) {
       console.log(error);
@@ -64,7 +65,7 @@ const AuthNavbar = () => {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ backgroundColor: "white", color: "#333", px: { xs: 2, md: 4 } }}>
+      <AppBar position="static" sx={{ backgroundColor: "white", color: "#333", px: { xs: 2, md: 4 } }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           {/* Logo */}
           <Typography
@@ -73,21 +74,46 @@ const AuthNavbar = () => {
             sx={{ fontWeight: "bold", fontFamily: "Segoe UI", color: "#243A4A", cursor: "pointer" }}
           >
             Culinar.io
-          </Typography>
-
-          {/* Desktop Navigation */}
+          </Typography >
           <Stack direction="row" spacing={2} alignItems="center" sx={{ display: { xs: "none", md: "flex" } }}>
-            <Button component={Link} to="/" sx={{ textTransform: "none", fontSize: "1rem" }}>
+            <Button
+              component={Link}
+              to="/"
+              sx={{
+                fontSize: "1rem",
+                color: '#2772A0',
+                fontWeight: location.pathname === "/home" ? "bold" : "normal" // Bold if active
+              }}
+            >
               Home
             </Button>
-            <Button component={Link} to="/" sx={{ textTransform: "none", fontSize: "1rem" }}>
-              My Recipes
+            <Button
+              component={Link}
+              to="/my-recipes"
+              sx={{
+                fontSize: "1rem",
+                color: '#2772A0',
+                fontWeight: location.pathname === "/my-recipes" ? "bold" : "normal"
+              }}
+            >
+              Recipes
+            </Button>
+            <Button
+              component={Link}
+              to="/create-recipe"
+              sx={{
+                fontSize: "1rem",
+                color: '#2772A0',
+                fontWeight: location.pathname === "/create-recipe" ? "bold" : "normal"
+              }}
+            >
+            Create
             </Button>
 
             {user ? (
               <>
                 <IconButton onClick={handleMenuClick}>
-                  <AccountCircleIcon sx={{ fontSize: "2rem", color: "#0076B3" }} />
+                  <AccountCircleIcon sx={{ fontSize: "2rem", color: "#2772A0" }} />
                 </IconButton>
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                   <MenuItem onClick={handleClose} component={Link} to="/profile">Profile</MenuItem>
@@ -108,10 +134,10 @@ const AuthNavbar = () => {
           <Menu anchorEl={mobileMenuEl} open={Boolean(mobileMenuEl)} onClose={handleClose}>
             <MenuItem component={Link} to="/">Home</MenuItem>
             {user ? (
-              <>
-                <MenuItem component={Link} to="/profile">Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              </>
+              [
+                <MenuItem component={Link} to="/profile" key="profile">Profile</MenuItem>,
+                <MenuItem onClick={handleLogout} key="logout">Logout</MenuItem>
+              ]
             ) : (
               <Typography variant="body1" sx={{ px: 2 }}>Loading...</Typography>
             )}

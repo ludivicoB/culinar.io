@@ -106,7 +106,7 @@ const CreateRecipePage = () => {
         pt: "2rem",
         pb: "10rem",
         minHeight: "80vh",
-        backgroundColor: "#A3D1E0",
+        backgroundColor: "#CCDDEA",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

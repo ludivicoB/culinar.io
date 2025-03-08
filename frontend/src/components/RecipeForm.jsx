@@ -60,7 +60,13 @@ const RecipeForm = ({ onSubmit }) => {
                                 </Box>
                             )}
                             <label htmlFor="file-upload">
-                                <Button variant="contained" component="span" fullWidth startIcon={<ImageIcon />}>
+                                <Button variant="contained" component="span" fullWidth startIcon={<ImageIcon />} 
+                                sx={{
+                                    backgroundColor: '#2772A0',
+                                    '&:hover': {
+                                        backgroundColor: '#243A4A'
+                                    }
+                                }} >
                                     Upload Image
                                 </Button>
                             </label>
@@ -71,7 +77,9 @@ const RecipeForm = ({ onSubmit }) => {
 
                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                             <motion.div initial={{ y: 100, opacity: 0.5 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.6 } }}>
-                                <Button type="submit" variant="contained" sx={{ marginTop: 2 }} startIcon={<LocalDiningIcon />}>
+                                <Button type="submit" variant="contained" sx={{ marginTop: 2, backgroundColor: '#2772A0','&:hover': {
+                                        backgroundColor: '#243A4A'
+                                    } }} startIcon={<LocalDiningIcon />}>
                                     Create Recipe
                                 </Button>
                             </motion.div>

@@ -38,7 +38,7 @@ const HeroCards = () => {
       display="flex"
       justifyContent="center"
       gap={4}
-      sx={{ backgroundColor: "#A3D1E0", py: '5rem', cursor: "pointer" }}
+      sx={{ backgroundColor: "#CCDDEA", py: '5rem', cursor: "pointer" }}
     >
       {cardData.map((card, index) => (
         <motion.div

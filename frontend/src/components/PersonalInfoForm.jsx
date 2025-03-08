@@ -78,7 +78,7 @@ const PersonalInfoForm = ({user, setUser}) => {
 
           <Box sx={{ textAlign: "center", mt: 3 }}>
             {!isEditing ? (
-              <Button variant="contained" onClick={onEdit} sx={{ mr: 2 }}>
+              <Button variant="contained" onClick={onEdit} sx={{ mr: 2, }}>
                 Edit
               </Button>
             ) : (

@@ -45,7 +45,7 @@ const ProfilePage = () => {
       sx={{
         paddingTop: '1rem', 
         padding: { xs: "2rem", md: "5rem " }, 
-        backgroundColor: "#A3D1E0" 
+        backgroundColor: "#CCDDEA" 
       }}
     >
       {user ? (
