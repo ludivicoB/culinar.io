@@ -29,4 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/recipe/insert-steps', [RecipeController::class, 'insertSteps']);
     Route::get('/user/recipe/all', [RecipeController::class, 'getAllRecipeOfUser']);
     Route::get('/user/get-recipe/{recipeid}', [RecipeController::class, 'getRecipeByID']);
+    Route::post('/recipe/update/{recipeid}', [RecipeController::class, 'updateRecipe']);
+    Route::post('/recipe/update-steps', [RecipeController::class, 'updateSteps']);
+    Route::post('/recipe/delete-ingredient', [RecipeController::class, 'deleteRecipeIngredient']);
+    Route::post('/recipe/update-ingredients', [RecipeController::class, 'updateRecipeIngredients']);
+    Route::post('/recipe/insert-ingredient', [RecipeController::class, 'addRecipeIngredient']);
 });

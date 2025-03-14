@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('recipe_image');
             $table->string('recipe_description');
             $table->string('category');
-
+            $table->unsignedInteger('estimated_time');
             $table->timestamps();
             $table->foreign('userid')->references('userid')->on('users');
         });

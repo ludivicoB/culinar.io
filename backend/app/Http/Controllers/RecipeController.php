@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Ingredient;
 use App\Models\Step;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 class RecipeController extends Controller
 {
@@ -33,6 +34,7 @@ class RecipeController extends Controller
         $filePath = $file->storeAs('recipeimgs', $fileName, 'public');
         $recipe->recipe_image = $fileName;
         $recipe->category = $request->input('category');
+        $recipe->estimated_time = $request->input('estimated_time');
         $recipe->save();
 
         return response()->json([
@@ -73,15 +75,8 @@ class RecipeController extends Controller
         }
 
     }
-
     public function insertSteps(Request $request)
     {
-        // $request->validate([
-        //     'recipe_id' => 'required|exists:recipes,id',
-        //     'steps' => 'required|array',
-        //     'steps.*.step_number' => 'required|integer|min:1',
-        //     'steps.*.description' => 'required|string|max:1000',
-        // ]);
 
         $recipeId = $request->input('recipe_id');
         $steps = $request->input('steps');
@@ -100,7 +95,6 @@ class RecipeController extends Controller
             'status' => 'success'
         ]);
     }
-
     public function getAllRecipeOfUser(Request $request)
     {
         $this->enableCors($request);
@@ -131,4 +125,148 @@ class RecipeController extends Controller
             'status' => 'success'
         ]);
     }
+    public function updateRecipe(Request $request, $recipeid)
+    {
+        $recipe = Recipe::find($recipeid);
+
+        // Update text fields
+        $recipe->recipe_name = $request->input('recipe_name');
+        $recipe->recipe_description = $request->input('recipe_description');
+        $recipe->category = $request->input('category');
+        $recipe->estimated_time = $request->input('estimated_time');
+
+        // Update image if a new one is uploaded
+        if ($request->hasFile('recipe_image')) {
+            // Delete old image
+            $oldRecipeImg = 'recipeimgs/' . $recipe->recipe_image;
+            if (Storage::disk('public')->exists($oldRecipeImg)) {
+                Storage::disk('public')->delete($oldRecipeImg);
+            }
+            // Storage::delete("public/recipeimgs/{$recipe->recipe_image}");
+
+            $file = $request->file('recipe_image');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('recipeimgs', $fileName, 'public');
+            $recipe->recipe_image = $fileName;
+        }
+
+        $recipe->save();
+        $recipe->recipe_image = asset("storage/recipeimgs/{$recipe->recipe_image}");
+
+        return response()->json([
+            'recipe' => $recipe,
+            // 'user' => $user,
+            'message' => 'Recipe updated successfully!',
+            'status' => 'success'
+        ]);
+    }
+    public function updateSteps(Request $request)
+    {
+        $recipeId = $request->input('recipe_id');
+        $steps = $request->input('steps');
+
+        $recipe = Recipe::find($recipeId);
+        if (!$recipe) {
+            return response()->json([
+                'message' => 'Recipe not found',
+                'status' => 'error'
+            ], 404);
+        }
+
+        Step::where('recipe_id', $recipeId)->delete();
+
+        foreach ($steps as $step) {
+            Step::create([
+                'recipe_id' => $recipeId,
+                'step_number' => $step['step_number'],
+                'description' => $step['description'],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Steps updated successfully!',
+            'status' => 'success'
+        ]);
+    }
+    public function deleteRecipeIngredient(Request $request)
+    {
+        $recipeId = $request->input('recipe_id');
+        $ingredientId = $request->input('ingredient_id');
+
+        DB::table('recipe_ingredients')->where('recipe_id', $recipeId)->where('ingredient_id', $ingredientId)->delete();
+        $recipe = Recipe::with(['ingredients'])->find($recipeId);
+        return response()->json([
+            'message' => 'Ingredient deleted successfully!',
+            'recipe' => $recipe,
+            'status' => 'success'
+        ]);
+    }
+    public function updateRecipeIngredients(Request $request)
+    {
+        $recipeId = $request->input('recipe_id');
+        $ingredients = $request->input('ingredients');
+
+        foreach ($ingredients as $ingredient) {
+            $existingIngredient = Ingredient::where('name', $ingredient['name'])->first();
+
+            if ($existingIngredient) {
+                DB::table('recipe_ingredients')
+                    ->where('recipe_id', $recipeId)
+                    ->where('ingredient_id', $ingredient['ingredient_id'])
+                    ->update([
+                        'quantity' => $ingredient['pivot']['quantity']
+                    ]);
+            } else {
+                $newIngredient = new Ingredient();
+                $newIngredient->name = $ingredient['name'];
+                $newIngredient->unit = $ingredient['unit'];
+                $newIngredient->save();
+
+                DB::table('recipe_ingredients')->insert([
+                    'recipe_id' => $recipeId,
+                    'ingredient_id' => $newIngredient->ingredient_id,
+                    'quantity' => $ingredient['pivot']['quantity'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                DB::table('recipe_ingredients')
+                    ->where('recipe_id', $recipeId)
+                    ->where('ingredient_id', $ingredient['ingredient_id'])
+                    ->delete();
+            }
+        }
+        $recipe = Recipe::with(['ingredients'])->find($recipeId);
+        return response()->json([
+            'message' => 'Ingredients updated successfully!',
+            'recipe' => $recipe,
+            'status' => 'success'
+        ]);
+    }
+    public function addRecipeIngredient(Request $request)
+    {
+        $recipeId = $request->input('recipe_id');
+        $ingredient = $request->input('ingredient');
+
+        $ingredientModel = Ingredient::firstOrCreate([
+            'name' => $ingredient['name']
+        ], [
+            'unit' => $ingredient['unit']
+        ]);
+        DB::table('recipe_ingredients')->insert([
+            'recipe_id' => $recipeId,
+            'ingredient_id' => $ingredientModel->ingredient_id,
+            'quantity' => $ingredient['quantity'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $recipe = Recipe::with(['ingredients'])->find($recipeId);
+        return response()->json([
+            'message' => 'Ingredient added successfully!',
+            'recipe' => $recipe,
+            'status' => 'success'
+        ]);
+    }
+
 }

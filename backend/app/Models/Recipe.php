@@ -16,6 +16,7 @@ class Recipe extends Model
         'recipe_image',
         'recipe_description',
         'category',
+        'estimated_time'
     ];
 
     public function user()
