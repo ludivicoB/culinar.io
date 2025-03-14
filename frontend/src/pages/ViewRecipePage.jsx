@@ -3,8 +3,9 @@ import Grid from '@mui/material/Grid2';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import PageLoader from '../components/PageLoader';
-import TagBox from '../components/TagBox';
+import PageLoader from '../components/util/PageLoader';
+import ImagePreview from '../components/ImagePreview';
+import TagBox from '../components/util/TagBox';
 import Fraction from "fraction.js";
 import {motion} from 'motion/react'
 const ViewRecipePage = () => {
@@ -133,7 +134,8 @@ const ViewRecipePage = () => {
                 {[ 
                   { img: '/images/icons/categoryicon.png', title: recipe.category, subtitle: 'Category' },
                   { img: '/images/icons/ingredient-icon-black.png', title: `${recipe.ingredients.length} Needed`, subtitle: 'Ingredients' },
-                  { img: '/images/icons/steps-icon.png', title: `${recipe.steps.length} Steps`, subtitle: 'No. Steps' }
+                  { img: '/images/icons/steps-icon.png', title: `${recipe.steps.length} Steps`, subtitle: 'No. Steps' },
+                  { img: '/images/icons/time-icon.png', title: `${recipe.estimated_time} Minutes`, subtitle: 'Time to Cook' }
                 ].map((item, index) => (
                   <motion.div key={index} variants={tagVariants} initial="hidden" animate="visible" custom={index}>
                     <TagBox img={item.img} title={item.title} subtitle={item.subtitle} />
@@ -152,22 +154,22 @@ const ViewRecipePage = () => {
                 <Box>
                   {recipe.ingredients.map((ingredient, index) => (
                     <Typography key={index} variant="body1" sx={{ color: 'gray' }}>
-                      {formatQuantity(ingredient.pivot.quantity, ingredient.unit)} {ingredient.name} {ingredient.unit}
+                      {formatQuantity(ingredient.pivot.quantity, ingredient.unit)}{ingredient.unit} {ingredient.name}
                     </Typography>
                   ))}
                 </Box>
               </Paper>
             </Grid>
             <Grid size={3}>
+              <ImagePreview recipe={recipe} />
               <Paper
                 elevation={2}
                 sx={{
                   width: '100%',
-                  height: '100%',
+                  height: '40%',
                   display: 'flex',
                   flexDirection: 'column-reverse',
                   alignItems: 'center',
-                  borderRadius: '20px',
                   backgroundImage: `url(${creator.avatar})`,
                   backgroundColor: `${creator.banner_color}`,
                   backgroundRepeat: 'no-repeat',
@@ -175,22 +177,17 @@ const ViewRecipePage = () => {
                   backgroundSize: 'contain', // or 'cover'
                 }}
               >
-                <Typography sx={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', padding: '0.5rem', borderRadius: '10px' }}>
-                 <span > Created By:</span>
+                <Typography sx={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', padding: '0.5rem', borderRadius: '10px', }}>
+                 <span > Created By: </span>
                  <span style={{fontWeight: '700', textWrap:'nowrap'}}>{creator.fname} {creator.lname}</span>
                 </Typography>
               </Paper>
           </Grid>
         </Grid>
       </Container>
-     
-      {/* INGREDIENTS SECTION */}
-      <Container maxWidth="100%" sx={{mb: '2rem'}}>
-        
-      </Container>
 
       {/* STEPS SECTION */}
-      <Container maxWidth='100%' sx={{mt: '2rem',}}>
+      <Container maxWidth='100%' sx={{mt: '2rem', overflowX: 'hidden'}}>
         <Box sx={{mb: '1rem'}}>
           <Grid container spacing={2}>
             <Grid size={12}>
@@ -204,7 +201,7 @@ const ViewRecipePage = () => {
                     key={index}
                     initial={{ opacity: 0, x: 70 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.4 }}
+                    transition={{ duration: 0.4, delay: index * 0.3 }}
                   >
                     <Paper elevation={2} key={index} sx={{ display:'flex', alignItems: 'center', backgroundColor:'#F7F7F7', padding: '2.5rem', mt: '0.6rem'}}>
                       <Typography variant='h4' sx={{color:'#E1A840', mr: '2rem'}} fontWeight={'bold'}>

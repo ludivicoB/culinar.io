@@ -36,6 +36,7 @@ const CreateRecipePage = () => {
       formData.append("description", data.description)
       formData.append("category", data.category)
       formData.append("image", data.image)
+      formData.append('estimated_time', data.estimatedTime)
       const res = await axios.post(`${apiUrl}/recipe`, formData,{
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -46,12 +47,15 @@ const CreateRecipePage = () => {
         setSnackbar({ open: true, message: res.data.message, severity: "success" });
         console.log(res.data);
         setRecipeId(res.data.recipe.recipe_id);
+        setLoading(false);
+        setCurrentStep(1);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     } finally {
       setLoading(false);
-      setCurrentStep(1);
+      console.log('next')
     }
   };
 
@@ -139,7 +143,7 @@ const CreateRecipePage = () => {
           <CircularProgress />
         </Backdrop>
       }
-      {currentStep === 0 && <RecipeForm onSubmit={handleRecipeSubmit} />}
+      {currentStep === 0 && <RecipeForm onSubmit={handleRecipeSubmit} setSnackbar={setSnackbar} />}
       {currentStep === 1 && <IngredientsForm ingredients={ingredients} setIngredients={setIngredients} onNext={handleIngredientsSubmit} />}
       {currentStep === 2 && <RecipeStepsForm steps={stepsData} setSteps={setStepsData} onSubmit={handleStepsSubmit} onBack={() => setCurrentStep(1)} />}
       

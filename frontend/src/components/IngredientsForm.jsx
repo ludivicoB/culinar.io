@@ -137,6 +137,7 @@ const IngredientsForm = ({ ingredients, setIngredients, onNext }) => {
                       <MenuItem value="lb">Pounds (lb)</MenuItem>
                       <MenuItem value="cup">Cup</MenuItem>
                       <MenuItem value="tbsp">Tablespoon (tbsp)</MenuItem>
+                      <MenuItem value="lt">Litres</MenuItem>
                       <MenuItem value="tsp">Teaspoon (tsp)</MenuItem>
                       <MenuItem value="pcs">Pieces</MenuItem>
                     </Select>

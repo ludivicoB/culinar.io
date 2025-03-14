@@ -3,8 +3,8 @@ import { Container, Backdrop, CircularProgress } from "@mui/material";
 import AvatarComponent from "../components/AvatarComponent";
 import PersonalInfoForm from "../components/PersonalInfoForm";
 import PasswordUpdateForm from "../components/PasswordUpdateForm";
-
 import axios from "axios";
+import PageLoader from "../components/util/PageLoader";
 
 const ProfilePage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -13,10 +13,10 @@ const ProfilePage = () => {
   const [avatar, setAvatar] = useState(null);
   
   useEffect(() => {
+    console.log(loading)
     window.scrollTo(0,0)
     const fetchProfilePicture = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(`${apiUrl}/profile-picture`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,7 +30,6 @@ const ProfilePage = () => {
       } catch (error) {
         console.error("Error fetching profile picture:", error);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -66,8 +65,7 @@ const ProfilePage = () => {
           <PasswordUpdateForm />
         </>
       ):(
-        <Container sx={{height: '10rem', paddingBottom: '25rem' }}>
-        </Container>
+        <PageLoader message={'Loading Profile'} />
       )}
       <Backdrop open={loading} sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <CircularProgress color="inherit" />

@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Backdrop, CircularProgress, IconButton } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Backdrop, CircularProgress, IconButton, Box } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -68,13 +68,30 @@ const AuthNavbar = () => {
       <AppBar position="static" sx={{ backgroundColor: "white", color: "#333", px: { xs: 2, md: 4 } }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           {/* Logo */}
-          <Typography
-            variant="h6"
+          <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.001, // Space between logo & text
+                cursor: "pointer",
+              }}
             onClick={() => navigate("/")}
-            sx={{ fontWeight: "bold", fontFamily: "Segoe UI", color: "#243A4A", cursor: "pointer" }}
           >
-            Culinar.io
-          </Typography >
+            <img 
+                src="/LOGO.png" // ✅ Make sure this file is inside the public folder
+                alt="Culinar.io Logo"
+                style={{ height: "40px", width: "auto" }} // ✅ Adjust size as needed
+            />
+            <Typography
+              variant="h6"
+              onClick={() => navigate("/")}
+              sx={{ fontWeight: "bold", fontFamily: "Segoe UI", color: "#243A4A", cursor: "pointer" }}
+            >
+
+              Culinar<span style={{color:'rgb(225, 168, 64)'}}>.io</span>
+            </Typography >
+          </Box>
+          
           <Stack direction="row" spacing={2} alignItems="center" sx={{ display: { xs: "none", md: "flex" } }}>
             <Button
               component={Link}
@@ -82,7 +99,7 @@ const AuthNavbar = () => {
               sx={{
                 fontSize: "1rem",
                 color: '#2772A0',
-                fontWeight: location.pathname === "/home" ? "bold" : "normal" // Bold if active
+                fontWeight: location.pathname === "/home" ? "1000" : "normal" // 1000 if active
               }}
             >
               Home
@@ -93,7 +110,7 @@ const AuthNavbar = () => {
               sx={{
                 fontSize: "1rem",
                 color: '#2772A0',
-                fontWeight: location.pathname === "/my-recipes" ? "bold" : "normal"
+                fontWeight: location.pathname === "/my-recipes" ? "1000" : "normal"
               }}
             >
               Recipes
@@ -104,7 +121,7 @@ const AuthNavbar = () => {
               sx={{
                 fontSize: "1rem",
                 color: '#2772A0',
-                fontWeight: location.pathname === "/create-recipe" ? "bold" : "normal"
+                fontWeight: location.pathname === "/create-recipe" ? "1000" : "normal"
               }}
             >
             Create
